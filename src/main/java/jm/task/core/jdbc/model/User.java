@@ -4,7 +4,8 @@ import org.hibernate.annotations.GeneratorType;
 
 import javax.persistence.*;
 
-@Table
+@Entity
+@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,5 +71,4 @@ public class User {
                 ", age=" + age +
                 '}';
     }
-
 }

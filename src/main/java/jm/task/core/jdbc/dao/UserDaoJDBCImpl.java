@@ -24,7 +24,6 @@ public class UserDaoJDBCImpl implements UserDao {
                     " age INTEGER(3), " +
                     " PRIMARY KEY(id))";
             connection.createStatement().execute(sql);
-            connection.setAutoCommit(false);
             connection.commit();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -52,7 +51,6 @@ public class UserDaoJDBCImpl implements UserDao {
             preparedStatement.setByte(3, age);
             preparedStatement.executeUpdate();
             connection.commit();
-            connection.close();
             System.out.println("User с именем – " + name + " добавлен в базу данных");
         } catch (SQLException e) {
             try {
@@ -63,6 +61,13 @@ public class UserDaoJDBCImpl implements UserDao {
                 throw new RuntimeException(ex);
             }
             throw new RuntimeException(e);
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException ignored) {
+            }
         }
     }
 
@@ -75,9 +80,22 @@ public class UserDaoJDBCImpl implements UserDao {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
             connection.commit();
-            connection.close();
         } catch (SQLException e) {
+            try {
+                if (connection != null) {
+                    connection.rollback();
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
             throw new RuntimeException(e);
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException ignored) {
+            }
         }
     }
 
@@ -116,6 +134,13 @@ public class UserDaoJDBCImpl implements UserDao {
                 throw new RuntimeException(ex);
             }
             throw new RuntimeException(e);
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException ignored) {
+            }
         }
     }
 }
